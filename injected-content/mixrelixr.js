@@ -122,7 +122,94 @@ $(() => {
 						$(this).removeClass("favoriteFriend");
 					}
 				});
+				if (settings.generalOptions.ignoredGames == null) {
+					settings.generalOptions.ignoredGames = ["PLAYERUNKNOWN'S BATTLEGROUNDS", "Star Wars: Battlefront II (2017)", "Destiny 2", "Fortnite", "Call of Duty: WWII"];
+				}
+				
+				if (settings.generalOptions.favoriteGames == null) {
+					settings.generalOptions.favoriteGames = ["Super Mario Odyssey", "Overwatch", "Stardew Valley", "Rocket League", "Minecraft", "Art", "Super Metroid", "The Sims 4"];
+				}
+
+				$("div.channel-type:not('.gameChecked')").each(function (index) {
+					streamer = $(this).closest("a").attr("href").substr(1);
+					gameName = $(this).text();
+					$(this).addClass("gameChecked")
+
+					if (settings.generalOptions.ignoredGames.includes(gameName)) {
+						log("Found "+streamer+" playing "+gameName+". Dimming it now.");
+						//$(this).closest("b-browse-card").hide();
+						$(this).closest("b-browse-card").css('opacity', '0.2');
+						if (!streamerIsFavorited(streamer)) {
+							$(this).closest("b-media-card").css("background-color", "red");
+						}
+						
+					}
+
+					if (settings.generalOptions.favoriteGames.includes(gameName)) {
+						$(this).closest("b-media-card").css("background-color", "blue");
+						if (streamerIsFavorited(streamer)) {
+							$(this).closest("b-media-card").css("background-color", "gold");
+						}
+					}
+
+				});
+
+				$("div.item.type").find("h1:not('.gameChecked')").each(function (index) {
+					if (!$(this).hasClass("gameChecked")) {
+						gameName = $(this).text();
+						log("found: "+gameName);
+						$(this).addClass("gameChecked");
+						if (settings.generalOptions.ignoredGames.includes(gameName)) {
+							//$(this).closest("div.item.type").before("<div class=\"changeGameStatus\" status=\"dislike\">&#128148;</div>");
+							$(this).closest("div.item.type").css('opacity', '0.2');
+							$(this).closest("div.item.type").css("background-color", "red");
+						} else if (settings.generalOptions.favoriteGames.includes(gameName)) {
+							//$(this).closest("div.item.type").before("<div class=\"changeGameStatus\" status=\"like\">&#10084;</div>");
+							$(this).closest("div.item.type").css("background-color", "blue");
+						} else {
+							//$(this).closest("div.item.type").before("<div class=\"changeGameStatus\" status=\"noStatus\">&#9825;</div>");
+						}
+
+					}
+					
+				});
+
 			}, 500);
+
+			/*$("div.changeGameStatus").click(function () {
+				log("change game status");
+						status = $(this).attr("status");
+						gameName = $(this).closest("div.item.type").find("h1").text();
+						switch (status) {
+							case "dislike":
+								$(this).removeClass("dislike");
+								$(this).addClass("noStatus");
+								$(this).closest("div.item.type").css('opacity', '1.0');
+								$(this).closest("div.item.type").css("background-color", "inheret");
+								break;
+
+							case "like":
+								$(this).removeClass("like");
+								$(this).addClass("dislike");
+								$(this).html("&#128148;");
+								$(this).closest("div.item.type").css('opacity', '0.2');
+								$(this).closest("div.item.type").css("background-color", "red");
+
+    							settings.generalOptions.favoriteGames.splice(settings.generalOptions.favoriteGames.indexOf(element), 1);
+
+								settings.generalOptions.ignoredGames.push(gameName);
+								break;
+
+							case "noStatus":
+							default:
+								$(this).removeClass("noStatus");
+								$(this).addClass("like");
+								$(this).html("&#10084;");
+								$(this).closest("div.item.type").css("background-color", "blue");
+								settings.generalOptions.favoriteGames.push(gameName);
+								break;
+						}
+					})*/
 		/*} else {
 			log("Highlighting Favorites is off");
 			// If highlights are off, then let's remove any active highlights.
@@ -133,7 +220,8 @@ $(() => {
 				clearInterval(cache.highlightLoop);
 			}
 		}*/
-
+		$("div#ignoreFilter").remove();
+		$("div.filters").append("<div id=\"ignoreFilter\" _ngcontent-c36=\"\" class=\"layout-row layout-align-space-between-center\"><label _ngcontent-c36=\"\" for=\"ignore\" >Hide Ignored Games</label><bui-checkbox _ngcontent-c36=\"\" name=\"ignore\" _nghost-c19=\"\" tabindex=\"0\" role=\"checkbox\" aria-checked=\"false\" class=\"ng-untouched ng-pristine ng-valid\"><label _ngcontent-c19=\"\" class=\"bui-label\"> <input _ngcontent-c19=\"\" tabindex=\"-1\" type=\"checkbox\"> <div _ngcontent-c19=\"\" class=\"bui-checkbox\"> <div _ngcontent-c19=\"\" class=\"bui-checkbox-frame\"></div> <div _ngcontent-c19=\"\" class=\"bui-checkbox-background\"> <svg _ngcontent-c19=\"\" xml:space=\"preserve\" class=\"bui-checkbox-checkmark\" version=\"1.1\" viewBox=\"0 0 24 24\" xmlns=\"http://www.w3.org/2000/svg\"> <path _ngcontent-c19=\"\" d=\"M4.1,12.7 9,17.6 20.3,6.3\" fill=\"none\" stroke=\"white\"></path> </svg> </div> <div _ngcontent-c19=\"\" class=\"bui-checkbox-indeterminate\"></div> </div> <span _ngcontent-c19=\"\" class=\"bui-checkbox-label\"></span> </label></bui-checkbox></div>")
 		
 	
 		if(!settings.homePageOptions) {
